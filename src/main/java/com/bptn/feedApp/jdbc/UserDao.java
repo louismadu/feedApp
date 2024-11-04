@@ -16,18 +16,18 @@ public class UserDao {
 	JdbcTemplate jdbcTemplate;
 
 	public List<UserBean> listUsers() {
-		String sql = "SELECT * FROM \"users\"";
+		String sql = "SELECT * FROM \"user\"";
 		return this.jdbcTemplate.query(sql, new UserMapper());
 	}
 
 	public UserBean findByUsername(String username) {
-		String sql = "SELECT * FROM \"users\" WHERE \"username\" = ?";
+		String sql = "SELECT * FROM \"user\" WHERE \"username\" = ?";
 		List<UserBean> users = this.jdbcTemplate.query(sql, new UserMapper(), username);
 		return users.isEmpty() ? null : users.get(0);
 	}
 
 	public void createUser(UserBean user) {
-		String sql = "INSERT INTO \"users\" (\"firstName\", \"lastName\", \"username\", \"phone\", \"emailId\", \"password\", \"emailVerified\", \"createdOn\") VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO \"user\" (\"firstName\", \"lastName\", \"username\", \"phone\", \"emailId\", \"password\", \"emailVerified\", \"createdOn\") VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
 		logger.debug("Insert Query: {}", sql);
 		logger.debug("Parameters: {}, {}, {}, {}, {}, {}, {}, {}", user.getFirstName(), user.getLastName(),
