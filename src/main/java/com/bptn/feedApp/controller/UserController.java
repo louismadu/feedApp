@@ -35,7 +35,7 @@ public class UserController {
 		return this.userService.listUsers();
 	}
 
-	@GetMapping("/{username}")
+	@GetMapping("/{username}") // url parameter
 	public UserBean findByUsername(@PathVariable String username) {
 		logger.debug("The findByUsername() method was invoked!, username={}", username);
 		return this.userService.findByUsername(username);
