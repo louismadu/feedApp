@@ -7,6 +7,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,32 +30,57 @@ import com.bptn.feedApp.security.JwtService;
 @Service
 public class UserService {
 
+	final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	@Autowired
 	UserRepository userRepository;
 
 	@Autowired
-	EmailService emailService; // Autowire EmailService
+	EmailService emailService;
+	@Autowired
+	PasswordEncoder passwordEncoder;
 
 	@Autowired
-	PasswordEncoder passwordEncoder; // Autowire PasswordEncoder
+	AuthenticationManager authenticationManager;
 
-	// Method to list all users
+	@Autowired
+	JwtService jwtService;
+
+	@Autowired
+	ResourceProvider provider;
+
 	public List<User> listUsers() {
 		return this.userRepository.findAll();
 	}
 
-	// Method to find a user by username
 	public Optional<User> findByUsername(String username) {
 		return this.userRepository.findByUsername(username);
 	}
 
-	// Method to create a new user
 	public void createUser(User user) {
 		this.userRepository.save(user);
 	}
 
-	// New method to validate username and email for duplication
+	public User signup(User user) {
+
+		user.setUsername(user.getUsername().toLowerCase());
+		user.setEmailId(user.getEmailId().toLowerCase());
+
+		this.validateUsernameAndEmail(user.getUsername(), user.getEmailId());
+
+		user.setEmailVerified(false);
+		user.setPassword(this.passwordEncoder.encode(user.getPassword()));
+		user.setCreatedOn(Timestamp.from(Instant.now()));
+
+		this.userRepository.save(user);
+
+		this.emailService.sendVerificationEmail(user);
+
+		return user;
+	}
+
 	private void validateUsernameAndEmail(String username, String emailId) {
+
 		this.userRepository.findByUsername(username).ifPresent(u -> {
 			throw new UsernameExistException(String.format("Username already exists, %s", u.getUsername()));
 		});
@@ -61,30 +88,7 @@ public class UserService {
 		this.userRepository.findByEmailId(emailId).ifPresent(u -> {
 			throw new EmailExistException(String.format("Email already exists, %s", u.getEmailId()));
 		});
-	}
 
-	// Updated signup method with validation and password encryption
-	public User signup(User user) {
-		// Convert username and emailId to lowercase
-		user.setUsername(user.getUsername().toLowerCase());
-		user.setEmailId(user.getEmailId().toLowerCase());
-
-		// Validate username and email for duplication
-		this.validateUsernameAndEmail(user.getUsername(), user.getEmailId());
-
-		// Set emailVerified to false and encrypt the password
-		user.setEmailVerified(false);
-		user.setPassword(this.passwordEncoder.encode(user.getPassword()));
-		user.setCreatedOn(Timestamp.from(Instant.now()));
-
-		// Save the user to the database
-		this.userRepository.save(user);
-
-		// Send the verification email after saving the user
-		this.emailService.sendVerificationEmail(user);
-
-		// Return the saved user object
-		return user;
 	}
 
 	public void verifyEmail() {
@@ -108,9 +112,6 @@ public class UserService {
 		return user;
 	}
 
-	@Autowired
-	AuthenticationManager authenticationManager;
-
 	private Authentication authenticate(String username, String password) {
 		return this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 	}
@@ -124,16 +125,21 @@ public class UserService {
 		return this.userRepository.findByUsername(user.getUsername()).map(UserService::isEmailVerified).get();
 	}
 
-	@Autowired
-	JwtService jwtService;
-
-	@Autowired
-	ResourceProvider provider;
-
 	public HttpHeaders generateJwtHeader(String username) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(AUTHORIZATION, this.jwtService.generateJwtToken(username, this.provider.getJwtExpiration()));
 
 		return headers;
+	}
+
+	public void sendResetPasswordEmail(String emailId) {
+
+		Optional<User> opt = this.userRepository.findByEmailId(emailId);
+
+		if (opt.isPresent()) {
+			this.emailService.sendResetPasswordEmail(opt.get());
+		} else {
+			logger.debug("Email doesn't exist, {}", emailId);
+		}
 	}
 }
