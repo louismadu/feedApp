@@ -57,7 +57,7 @@ spring:
   jackson:
     time-zone: America/Toronto
     date-format: "yyyy-MM-dd HH:mm:ss"
-      
+
 # Email Settings
   mail:
     username: e1234mh@gmail.com
@@ -70,9 +70,10 @@ spring:
         smtp:
           auth: true
           starttls:
-            enable: true	
+            enable: true  
 
----      
+---    
+  
 # Prod Profile
 server:
   port: 8080
@@ -94,11 +95,12 @@ spring:
       ddl-auto: validate	
 
 ---
+
 # Test Profile
 spring:
   config:
     activate.on-profile: test  
-  
+
 # Database Settings
   sql.init:
     mode: always
