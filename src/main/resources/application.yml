@@ -1,6 +1,8 @@
-logging.level:
-  web: DEBUG
-  '[com.bptn.feedApp]': DEBUG
+#Logger
+logging:
+  level:
+    web: debug
+    '[com.bptn.feedApp]': debug
 
 # Active Profile
 spring:
@@ -16,6 +18,20 @@ spring:
   jackson:
     time-zone: America/Toronto
     date-format: "yyyy-MM-dd HH:mm:ss" 
+
+# Email Settings
+  mail:
+    username: e1234mh@gmail.com
+    password: 08106412747
+    host: smtp.gmail.com 
+    port: 587
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 # Common Database Settings
   sql:
@@ -53,27 +69,7 @@ spring:
     hibernate:
       ddl-auto: validate
 
-# Jackson Settings
-  jackson:
-    time-zone: America/Toronto
-    date-format: "yyyy-MM-dd HH:mm:ss"
-
-# Email Settings
-  mail:
-    username: e1234mh@gmail.com
-    password: lqqk hmom jhhx acxh
-    host: smtp.gmail.com
-    port: 587
-    protocol: smtp
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true  
-
----    
-  
+---      
 # Prod Profile
 server:
   port: 8080
@@ -92,15 +88,14 @@ spring:
       maximum-pool-size: 2
   jpa:
     hibernate:
-      ddl-auto: validate	
+      ddl-auto: validate
 
 ---
-
 # Test Profile
 spring:
   config:
     activate.on-profile: test  
-
+  
 # Database Settings
   sql.init:
     mode: always
@@ -120,4 +115,4 @@ spring:
       path: /h2-console
       settings:
         trace: false
-        web-allow-others: true 
+        web-allow-others: true

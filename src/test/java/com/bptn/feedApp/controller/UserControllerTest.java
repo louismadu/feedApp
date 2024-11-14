@@ -202,71 +202,38 @@ public class UserControllerTest {
 				.andExpect(jsonPath("$.emailVerified", is(true)));
 	}
 
-//	@Test
-//	@Order(7)
-//	public void loginEmailNotVerifiedIntegrationTest() throws Exception {
-//
-//		/* Create object to generate JSON */
-//		ObjectNode root = this.objectMapper.createObjectNode();
-//		root.put("username", this.user.getUsername());
-//		root.put("password", this.user.getPassword());
-//
-//		/* Check if the User exists */
-//		Optional<User> opt = this.userRepository.findByUsername(this.user.getUsername());
-//		assertTrue(opt.isPresent(), "User Should Exist");
-//
-//		/* Set user.emailVerified to false */
-//		opt.ifPresent(u -> {
-//			u.setEmailVerified(false);
-//			this.userRepository.save(u);
-//		});
-//
-//		/* Check the Rest End Point Response */
-//		this.mockMvc
-//				.perform(MockMvcRequestBuilders.post("/user/login").contentType(MediaType.APPLICATION_JSON)
-//						.content(this.objectMapper.writeValueAsString(root)))
-//				.andExpect(status().is4xxClientError()).andExpect(jsonPath("$.httpStatusCode", is(400)))
-//				.andExpect(jsonPath("$.httpStatus", is("BAD_REQUEST")))
-//				.andExpect(jsonPath("$.reason", is("BAD REQUEST"))).andExpect(jsonPath("$.message",
-//						is(String.format("Email requires verification, %s", this.user.getEmailId()))));
-//
-//		/* Check if the User exists */
-//		opt = this.userRepository.findByUsername(this.user.getUsername());
-//		assertTrue(opt.isPresent(), "User Should Exist");
-//
-//	}
-//
-//	@Test
-//	@Order(7)
-//	public void loginEmailNotVerifiedIntegrationTest() throws Exception {
-//
-//		/* Create object to generate JSON */
-//		ObjectNode root = this.objectMapper.createObjectNode();
-//		root.put("username", this.user.getUsername());
-//		root.put("password", this.user.getPassword());
-//
-//		/* Check if the User exists */
-//		Optional<User> opt = this.userRepository.findByUsername(this.user.getUsername());
-//		assertTrue(opt.isPresent(), "User Should Exist");
-//
-//		/* Set user.emailVerified to false */
-//		opt.ifPresent(u -> {
-//			u.setEmailVerified(false);
-//			this.userRepository.save(u);
-//		});
-//
-//		/* Check the Rest End Point Response */
-//		this.mockMvc
-//				.perform(MockMvcRequestBuilders.post("/user/login").contentType(MediaType.APPLICATION_JSON)
-//						.content(this.objectMapper.writeValueAsString(root)))
-//				.andExpect(status().is4xxClientError()).andExpect(jsonPath("$.httpStatusCode", is(400)))
-//				.andExpect(jsonPath("$.httpStatus", is("BAD_REQUEST")))
-//				.andExpect(jsonPath("$.reason", is("BAD REQUEST"))).andExpect(jsonPath("$.message",
-//						is(String.format("Email requires verification, %s", this.user.getEmailId()))));
-//
-//		/* Check if the User exists */
-//		opt = this.userRepository.findByUsername(this.user.getUsername());
-//		assertTrue(opt.isPresent(), "User Should Exist");
-//
-//	}
+	@Test
+	@Order(7)
+	public void loginEmailNotVerifiedIntegrationTest() throws Exception {
+
+		/* Create object to generate JSON */
+		ObjectNode root = this.objectMapper.createObjectNode();
+		root.put("username", this.user.getUsername());
+		root.put("password", this.user.getPassword());
+
+		/* Check if the User exists */
+		Optional<User> opt = this.userRepository.findByUsername(this.user.getUsername());
+		assertTrue(opt.isPresent(), "User Should Exist");
+
+		/* Set user.emailVerified to false */
+		opt.ifPresent(u -> {
+			u.setEmailVerified(false);
+			this.userRepository.save(u);
+		});
+
+		/* Check the Rest End Point Response */
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.post("/user/login").contentType(MediaType.APPLICATION_JSON)
+						.content(this.objectMapper.writeValueAsString(root)))
+				.andExpect(status().is4xxClientError()).andExpect(jsonPath("$.httpStatusCode", is(400)))
+				.andExpect(jsonPath("$.httpStatus", is("BAD_REQUEST")))
+				.andExpect(jsonPath("$.reason", is("BAD REQUEST"))).andExpect(jsonPath("$.message",
+						is(String.format("Email requires verification, %s", this.user.getEmailId()))));
+
+		/* Check if the User exists */
+		opt = this.userRepository.findByUsername(this.user.getUsername());
+		assertTrue(opt.isPresent(), "User Should Exist");
+
+	}
+
 }
